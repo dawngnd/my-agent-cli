@@ -1,7 +1,7 @@
 {
   "name": "my-agent-cli",
   "version": "1.0.0",
-  "description": "CLI to download rules, workflows, and skills",
+  "description": "CLI to download rules, workflows, and skills from a GitHub repository for AI Agents",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -10,6 +10,27 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dawngnd/my-agent-cli.git"
+  },
+  "keywords": [
+    "cli",
+    "ai",
+    "agent",
+    "rules",
+    "workflows",
+    "skills",
+    "cursor",
+    "cline",
+    "antigravity"
+  ],
+  "author": "dawngnd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dawngnd/my-agent-cli/issues"
+  },
+  "homepage": "https://github.com/dawngnd/my-agent-cli#readme",
   "dependencies": {
     "axios": "^1.13.6",
     "commander": "^14.0.3",
