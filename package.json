@@ -1,7 +1,7 @@
 {
   "name": "my-agent-cli",
   "version": "1.0.0",
-  "description": "CLI để tải rules, workflows, skills",
+  "description": "CLI to download rules, workflows, and skills",
   "main": "index.js",
   "type": "module",
   "bin": {

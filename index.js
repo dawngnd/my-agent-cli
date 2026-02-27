@@ -47,7 +47,7 @@ function formatDisplay(name, desc) {
 
 // Xử lý logic gỡ cài đặt (clean)
 async function handleClean() {
-  console.log(pc.cyan(pc.bold('🧹 Chế độ dọn dẹp cấu hình Agent Profiles\n')));
+  console.log(pc.cyan(pc.bold('🧹 Agent Profiles Cleanup Mode\n')));
 
   const rulesPath = path.join(destDir, '.agent');
   const workflowsPath = path.join(destDir, '.agent', 'workflows');
@@ -90,7 +90,7 @@ async function handleClean() {
   }
 
   if (choices.length === 0) {
-    console.log(pc.yellow('Không tìm thấy Rules/Workflows/Skills nào đang được cài đặt trong dự án hiện tại.'));
+    console.log(pc.yellow('No installed Rules/Workflows/Skills found in the current project.'));
     return;
   }
 
@@ -98,7 +98,7 @@ async function handleClean() {
     {
       type: 'checkbox',
       name: 'selectedPaths',
-      message: 'Hãy tích chọn (Space) những nội dung bạn muốn GỠ BỎ khỏi dự án, ấn Enter để xác nhận:',
+      message: 'Select (Space) the items you want to REMOVE from the project, press Enter to confirm:',
       choices: choices,
       pageSize: 15
     }
@@ -106,38 +106,38 @@ async function handleClean() {
 
   const selectedPaths = answers.selectedPaths || [];
   if (selectedPaths.length === 0) {
-    console.log(pc.yellow('⚠️ Bạn chưa chọn mục nào để xoá. Hủy thao tác.'));
+    console.log(pc.yellow('⚠️ No items selected for removal. Operation cancelled.'));
     return;
   }
 
-  console.log(pc.blue('\n⏳ Đang tiến hành xoá...'));
+  console.log(pc.blue('\n⏳ Removing selected items...'));
 
   for (const relPath of selectedPaths) {
     const targetPath = path.join(destDir, relPath);
     if (fs.existsSync(targetPath)) {
       fs.rmSync(targetPath, { recursive: true, force: true });
-      console.log(pc.red(`  ✖ Đã xoá: `) + relPath);
+      console.log(pc.red(`  ✖ Removed: `) + relPath);
     }
   }
 
-  console.log(pc.green(pc.bold('\n🎉 Đã dọn dẹp xong!')));
+  console.log(pc.green(pc.bold('\n🎉 Cleanup complete!')));
 }
 
 async function run() {
   program
     .name('my-agent-cli')
-    .description(pc.yellow('CLI để lấy các quy tắc (Rules), quy trình (Workflows), kỹ năng (Skills) về máy cho AI Agent\n') +
-      'Công cụ giúp bạn nhanh chóng import thư mục .agent cũng như .agents/skills vào thư mục dự án hiện tại ' +
-      'để trợ lý AI (như Antigravity/Cursor/Cline) có thể sử dụng.')
-    .version('1.0.0', '-v, --version', 'Hiển thị phiên bản hiện tại')
-    .option('-r, --repo <url>', 'Đường dẫn tới GitHub Repository chứa templates (VD: user/repo hoặc https://github.com/user/repo)')
-    .option('-c, --clean', 'Gỡ cài đặt (xoá) các rules, workflows, skills hiện có trong dự án')
+    .description(pc.yellow('CLI to download Rules, Workflows, and Skills for your AI Agent\n') +
+      'A tool to quickly import .agent and .agents/skills directories into your current project ' +
+      'so AI assistants (like Antigravity/Cursor/Cline) can utilize them.')
+    .version('1.0.0', '-v, --version', 'Show the current version')
+    .option('-r, --repo <url>', 'URL to the GitHub Repository containing templates (e.g., user/repo or https://github.com/user/repo)')
+    .option('-c, --clean', 'Uninstall (remove) existing rules, workflows, skills from the project')
     .addHelpText('after', `
-Ví dụ cách sử dụng:
-  $ my-agent-cli                            (Cài đặt từ thư mục cục bộ 'templates' mặc định)
-  $ my-agent-cli --repo owner/my-repo       (Download trực tiếp từ thư mục của GitHub repository)
+Usage Examples:
+  $ my-agent-cli                            (Install from the local 'templates' directory by default)
+  $ my-agent-cli --repo owner/my-repo       (Download directly from a GitHub repository)
   $ my-agent-cli -r https://github.com/owner/my-repo
-  $ my-agent-cli --clean                    (Gỡ bỏ cài đặt / dọn dẹp cấu hình AI)
+  $ my-agent-cli --clean                    (Uninstall / clean AI configurations)
     `);
 
   program.parse(process.argv);
@@ -148,7 +148,7 @@ Ví dụ cách sử dụng:
     return;
   }
 
-  console.log(pc.cyan(pc.bold('🤖 Chào mừng đến với công cụ cài đặt Agent Profiles!\n')));
+  console.log(pc.cyan(pc.bold('🤖 Welcome to the Agent Profiles Installer!\n')));
 
   let rules = [];
   let workflows = [];
@@ -165,11 +165,11 @@ Ví dụ cách sử dụng:
     repoInfo = parseGitHubUrl(options.repo);
 
     if (!repoInfo) {
-      console.log(pc.red('❌ Đường dẫn GitHub không hợp lệ. Vui lòng định dạng dưới dạng owner/repo hoặc nhập URL đầy đủ.'));
+      console.log(pc.red('❌ Invalid GitHub URL. Please format as owner/repo or use a full URL.'));
       return;
     }
 
-    console.log(pc.blue(`⏳ Đang phân tích cấu trúc từ GitHub Repository: ${repoInfo.owner}/${repoInfo.repo}...`));
+    console.log(pc.blue(`⏳ Analyzing structure from GitHub Repository: ${repoInfo.owner}/${repoInfo.repo}...`));
 
     try {
       // 1. Lấy thông tin Repo để biết default branch
@@ -217,7 +217,7 @@ Ví dụ cách sử dụng:
         }
       });
 
-      console.log(pc.blue(`⏳ Đang lấy thông tin mô tả chi tiết (Description) của các file...`));
+      console.log(pc.blue(`⏳ Fetching detailed descriptions for files...`));
 
       // 3. Đọc nội dung file tạm thời để lấy Description
       async function mapWithDescription(filesMap) {
@@ -237,12 +237,12 @@ Ví dụ cách sử dụng:
       workflows = await mapWithDescription(workflowsSet);
       skills = await mapWithDescription(skillsSet);
 
-      console.log(pc.green(`✔ Phân tích xong!\n`));
+      console.log(pc.green(`✔ Analysis complete!\n`));
 
     } catch (err) {
-      console.error(pc.red('❌ Lỗi khi fetch dữ liệu từ GitHub:'), err.response?.data?.message || err.message);
+      console.error(pc.red('❌ Error fetching data from GitHub:'), err.response?.data?.message || err.message);
       if (err.response?.status === 404) {
-        console.error(pc.yellow('Repository không tồn tại hoặc ở dạng Private. Vui lòng kiểm tra lại đường dẫn.'));
+        console.error(pc.yellow('Repository does not exist or is Private. Please verify the URL.'));
       }
       return;
     }
@@ -318,11 +318,11 @@ Ví dụ cách sử dụng:
 
   if (choices.length === 0) {
     if (totalFound > 0) {
-      console.log(pc.green('✔ Tất cả cấu hình mẫu (Rules/Workflows/Skills) đều đã được cài đặt đầy đủ trong dự án này.'));
+      console.log(pc.green('✔ All available templates (Rules/Workflows/Skills) are already completely installed in this project.'));
     } else {
       console.log(pc.red(isGithub
-        ? 'Không tìm thấy cấu trúc mẫu (Rules/Workflows/Skills) hợp lệ trong GitHub Repository này.'
-        : 'Không tìm thấy mẫu nào trong thư mục templates cục bộ. Bạn cần copy folder .agent và .agents vào thư mục templates của my-agent-cli.'));
+        ? 'No valid template structures (Rules/Workflows/Skills) found in this GitHub Repository.'
+        : 'No templates found in the local templates directory. You need to copy .agent and .agents folders into templates/ directory.'));
     }
     return;
   }
@@ -331,7 +331,7 @@ Ví dụ cách sử dụng:
     {
       type: 'checkbox',
       name: 'selectedPaths',
-      message: 'Hãy tích chọn (Space) những nội dung bạn muốn cài đặt, ấn Enter để xác nhận:',
+      message: 'Select (Space) the items you want to install, press Enter to confirm:',
       choices: choices,
       pageSize: 15
     }
@@ -340,11 +340,11 @@ Ví dụ cách sử dụng:
   const selectedPaths = answers.selectedPaths || [];
 
   if (selectedPaths.length === 0) {
-    console.log(pc.yellow('⚠️ Bạn chưa chọn file nào. Hủy thao tác.'));
+    console.log(pc.yellow('⚠️ No items selected. Operation cancelled.'));
     return;
   }
 
-  console.log(pc.blue('\n⏳ Đang cài đặt...'));
+  console.log(pc.blue('\n⏳ Installing...'));
 
   for (const relPath of selectedPaths) {
     if (isGithub) {
@@ -361,10 +361,10 @@ Ví dụ cách sử dụng:
 
           fs.writeFileSync(dest, resp.data);
         } catch (err) {
-          console.error(pc.red(`  ✖ Lỗi khi download file: ${filePath}`));
+          console.error(pc.red(`  ✖ Error downloading file: ${filePath}`));
         }
       }
-      console.log(pc.green(`  ✔ Đã lấy về: `) + relPath);
+      console.log(pc.green(`  ✔ Downloaded: `) + relPath);
     } else {
       // Sao chép từ local templates
       const src = path.join(sourceDir, relPath);
@@ -377,15 +377,15 @@ Ví dụ cách sử dụng:
         }
 
         fs.cpSync(src, dest, { recursive: true });
-        console.log(pc.green(`  ✔ Đã copy: `) + relPath);
+        console.log(pc.green(`  ✔ Copied: `) + relPath);
       }
     }
   }
 
-  console.log(pc.green(pc.bold('\n🎉 Xong! Mã của bạn đã sẵn sàng cho AI Assistant.')));
+  console.log(pc.green(pc.bold('\n🎉 Done! Your code is now ready for the AI Assistant.')));
 }
 
 run().catch(err => {
   if (err.isTtyError || err.name === 'ExitPromptError') return;
-  console.error(pc.red('Đã có lỗi xảy ra:'), err);
+  console.error(pc.red('An error occurred:'), err);
 });
