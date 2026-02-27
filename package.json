@@ -1,6 +1,6 @@
 {
   "name": "my-agent-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI to download rules, workflows, and skills from a GitHub repository for AI Agents",
   "main": "index.js",
   "type": "module",
